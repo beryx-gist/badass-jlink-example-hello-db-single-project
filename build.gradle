@@ -1,0 +1,84 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.jlink' version '2.23.6'
+}
+
+repositories {
+    mavenCentral()
+}
+
+version = "1.0.0"
+
+javafx {
+    modules = ['javafx.controls']
+}
+
+configurations {
+    h2
+    hsqldb
+    h2RuntimeClasspath { extendsFrom(h2, runtimeClasspath) }
+    hsqldbRuntimeClasspath { extendsFrom(hsqldb, runtimeClasspath) }
+}
+
+dependencies {
+    h2 'com.h2database:h2:1.4.200'
+    hsqldb 'org.hsqldb:hsqldb:2.6.0'
+    compileOnly configurations.h2, configurations.hsqldb
+}
+
+def h2Variant = [
+    configuration: 'h2RuntimeClasspath',
+    jvmArgs: [
+        '-Ddb.url=jdbc:h2:mem:test',
+        '-Ddb.user=sa',
+        '-Ddb.password=',
+    ],
+    jlinkOptions: ['--add-modules', 'hello.db.merged.module']
+]
+
+def hsqldbVariant = [
+    configuration: 'hsqldbRuntimeClasspath',
+    jvmArgs: [
+        '-Ddb.url=jdbc:hsqldb:mem:test',
+        '-Ddb.user=SA',
+        '-Ddb.password=',
+    ],
+    jlinkOptions: ['--add-modules', 'org.hsqldb']
+]
+
+def variants = [h2: h2Variant, hsqldb: hsqldbVariant]
+
+application {
+    mainClass = "org.example.hellodb.HelloDB"
+    mainModule = "org.example.hellodb"
+    applicationDefaultJvmArgs = variants[variantName].jvmArgs
+}
+
+jlink {
+    def variant = variants[variantName]
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    addOptions(variant.jlinkOptions as String[])
+    launcher {
+        name = 'helloDB'
+        jlinkBasePath = "$buildDir/jlinkBasePath-$variantName"
+        imageName = "image-$variantName"
+        configuration = variant.configuration
+        jvmArgs = variants[variantName].jvmArgs
+        addExtraDependencies 'h2'
+    }
+}
+
+task jlinkAll(group: 'distribution', description: 'Creating packages for all customers') {
+  	doFirst {
+    		variants.keySet().each {
+      			def variant = it
+            GradleRunner.create()
+                    .withDebug(true)
+                    .withProjectDir(projectDir)
+                    .forwardOutput()
+                    .withArguments("-is", "-P", "variantName=$variant", "jlink")
+                    .build();
+      		}
+  	}
+}
