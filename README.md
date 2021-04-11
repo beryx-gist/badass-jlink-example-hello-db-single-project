@@ -1,5 +1,5 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/beryx-gist/badass-jlink-example-hello-db-single-project/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/beryx-gist/badass-jlink-example-hello-db-single-project/blob/main/LICENSE)
 [![Build Status](https://img.shields.io/github/workflow/status/beryx-gist/badass-jlink-example-hello-db-single-project/jlinkAll)](https://github.com/beryx-gist/badass-jlink-example-hello-db-single-project/actions?query=workflow%3A%22jlinkAll%22)
 
 
