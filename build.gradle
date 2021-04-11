@@ -34,7 +34,7 @@ def h2Variant = [
         '-Ddb.user=sa',
         '-Ddb.password=',
     ],
-    jlinkOptions: ['--add-modules', 'hello.db.merged.module']
+    jlinkOptions: ['--add-modules', 'hello.db.single.project.merged.module']
 ]
 
 def hsqldbVariant = [
